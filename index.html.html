@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Kanban - INDUREC S.A.C. (Problema 5)</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de Chart.js para gráficos interactivos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fuente Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        /* Estilo personalizado para el control deslizante (slider) */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #cbd5e1;
+            height: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -6px;
+            background-color: #1f4e78;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background-color: #4a90e2;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Encabezado Ejecutivo -->
+    <header class="bg-[#1f4e78] text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/10 p-2 rounded-lg border border-white/20">
+                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">Simulador de Escenarios Determinísticos — INDUREC S.A.C.</h1>
+                    <p class="text-xs text-slate-300">Problema 5: Reducción de Materiales Dañados mediante Tarjetas Kanban | Capstone Ingeniería Industrial</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="restaurarValores()" class="px-3 py-1.5 text-xs font-medium bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 transition flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Restaurar Línea Base
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- PANEL IZQUIERDO: Controles y Parámetros (4 columnas en escritorio) -->
+            <aside class="lg:col-span-4 space-y-6">
+                
+                <!-- Tarjeta de Escenarios Rápidos -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h2 class="text-sm font-bold text-[#1f4e78] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-[#4a90e2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Escenarios Predefinidos
+                    </h2>
+                    <p class="text-xs text-slate-500 mb-3">Seleccione un nivel de cumplimiento del sistema Kanban para simular:</p>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button onclick="seleccionarEscenario(0)" id="btn-esc-0" class="escenario-btn px-3 py-2.5 rounded-lg border border-slate-200 text-left transition hover:border-[#4a90e2]">
+                            <div class="text-xs font-semibold text-slate-700">1. Actual</div>
+                            <div class="text-sm font-bold text-slate-500">0.0% Reducción</div>
+                        </button>
+                        <button onclick="seleccionarEscenario(30)" id="btn-esc-30" class="escenario-btn px-3 py-2.5 rounded-lg border border-slate-200 text-left transition hover:border-[#4a90e2]">
+                            <div class="text-xs font-semibold text-slate-700">2. Conservador</div>
+                            <div class="text-sm font-bold text-[#4a90e2]">30.0% Reducción</div>
+                        </button>
+                        <button onclick="seleccionarEscenario(50)" id="btn-esc-50" class="escenario-btn px-3 py-2.5 rounded-lg border border-slate-200 text-left transition hover:border-[#4a90e2]">
+                            <div class="text-xs font-semibold text-slate-700">3. Moderado</div>
+                            <div class="text-sm font-bold text-[#4a90e2]">50.0% Reducción</div>
+                        </button>
+                        <button onclick="seleccionarEscenario(63.94)" id="btn-esc-63.94" class="escenario-btn px-3 py-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50/60 text-left transition">
+                            <div class="text-xs font-semibold text-emerald-800">4. Optimista / Meta</div>
+                            <div class="text-sm font-bold text-emerald-600">63.9% Reducción</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Control Deslizante Principal -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="sliderReduccion" class="text-sm font-bold text-[#1f4e78]">% Reducción de Daños Proyectado</label>
+                        <div class="flex items-center bg-slate-100 rounded-lg px-2 py-1 border border-slate-300">
+                            <input type="number" id="inputReduccionNum" value="63.94" min="0" max="100" step="0.1" class="w-16 text-right font-bold text-[#1f4e78] bg-transparent focus:outline-none text-sm">
+                            <span class="text-xs font-bold text-slate-500 ml-1">%</span>
+                        </div>
+                    </div>
+                    <input type="range" id="sliderReduccion" min="0" max="100" step="0.1" value="63.94" class="w-full my-3">
+                    <div class="flex justify-between text-[11px] text-slate-400 font-medium">
+                        <span>0% (Sin mejora)</span>
+                        <span>50%</span>
+                        <span class="text-emerald-600 font-semibold">Meta: 63.9%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Parámetros Editables de Línea Base -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-4">
+                    <h2 class="text-sm font-bold text-[#1f4e78] uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-4 h-4 text-[#4a90e2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        Parámetros Base (Diagnóstico)
+                    </h2>
+                    
+                    <div>
+                        <label for="inputRechazoBase" class="block text-xs font-semibold text-slate-600 mb-1">Índice de rechazo actual (%)</label>
+                        <div class="relative">
+                            <input type="number" id="inputRechazoBase" value="4.15" min="0.1" max="100" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800 focus:border-[#4a90e2] focus:outline-none">
+                            <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">%</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Registro Ene-May: 83 dañados de 1,998 und.</p>
+                    </div>
+
+                    <div>
+                        <label for="inputCostoMensualBase" class="block text-xs font-semibold text-slate-600 mb-1">Costo mensual actual por daños (S/)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2 text-xs text-slate-400 font-bold">S/</span>
+                            <input type="number" id="inputCostoMensualBase" value="1805.92" min="0" step="10" class="w-full rounded-lg border border-slate-300 pl-8 pr-3 py-2 text-sm font-semibold text-slate-800 focus:border-[#4a90e2] focus:outline-none">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Proyección anual actual: S/ <span id="lblCostoAnualBase">21,671.04</span></p>
+                    </div>
+
+                    <div>
+                        <label for="inputInversion" class="block text-xs font-semibold text-slate-600 mb-1">Inversión inicial sistema Kanban (S/)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2 text-xs text-slate-400 font-bold">S/</span>
+                            <input type="number" id="inputInversion" value="418.00" min="1" step="10" class="w-full rounded-lg border border-slate-300 pl-8 pr-3 py-2 text-sm font-semibold text-slate-800 focus:border-[#4a90e2] focus:outline-none">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Incluye tableros, tarjetas y 37.5 HH capacitación.</p>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- PANEL DERECHO: KPIs, Gráficos y Tabla (8 columnas en escritorio) -->
+            <section class="lg:col-span-8 space-y-6">
+                
+                <!-- Fila de 5 Tarjetas de KPIs Dinámicos -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    
+                    <!-- KPI 1: Índice de Rechazo -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Índice de Rechazo</span>
+                            <span id="badgeMetaRechazo" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700">Cumple Meta ≤ 1.5%</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="kpiRechazo" class="text-2xl font-extrabold text-[#1f4e78]">1.50%</span>
+                            <span id="kpiRechazoVar" class="text-xs font-semibold text-emerald-600 ml-1.5">(-2.65 pp)</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">Línea base: <span id="kpiRechazoBaseRef">4.15%</span></div>
+                    </div>
+
+                    <!-- KPI 2: Costo Mensual por Daños -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Costo Mensual Daños</span>
+                            <div class="p-1.5 bg-amber-50 rounded-lg text-amber-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="my-2">
+                            <span id="kpiCostoMensual" class="text-2xl font-extrabold text-slate-800">S/ 651.17</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">Antes: S/ <span id="kpiCostoMensualRef">1,805.92</span> / mes</div>
+                    </div>
+
+                    <!-- KPI 3: Ahorro Mensual Estimado -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Ahorro Mensual Est.</span>
+                            <div class="p-1.5 bg-emerald-50 rounded-lg text-emerald-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            </div>
+                        </div>
+                        <div class="my-2">
+                            <span id="kpiAhorroMensual" class="text-2xl font-extrabold text-emerald-600">S/ 1,154.75</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 font-medium">Ahorro anual: <span id="kpiAhorroAnualSub" class="font-bold text-slate-700">S/ 13,857.00</span></div>
+                    </div>
+
+                    <!-- KPI 4: Beneficio Neto 1er Año -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between sm:col-span-1 xl:col-span-1">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Beneficio Neto (Año 1)</span>
+                            <div class="p-1.5 bg-blue-50 rounded-lg text-[#4a90e2]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="my-2">
+                            <span id="kpiBeneficioNeto" class="text-2xl font-extrabold text-[#1f4e78]">S/ 13,439.00</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400">Descontando inversión de S/ <span id="kpiInversionRef">418.00</span></div>
+                    </div>
+
+                    <!-- KPI 5: ROI y Payback -->
+                    <div class="bg-gradient-to-br from-[#1f4e78] to-[#2b6cb0] text-white rounded-xl shadow-sm p-4 flex flex-col justify-between sm:col-span-2 xl:col-span-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-blue-200 uppercase">Retorno de Inversión (ROI - Año 1)</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-white/20 text-white">Indicador Clave</span>
+                        </div>
+                        <div class="my-2 flex flex-wrap items-baseline justify-between gap-2">
+                            <span id="kpiRoi" class="text-2xl sm:text-3xl font-extrabold text-white">3,215.1%</span>
+                            <div class="bg-white/15 px-3 py-1 rounded-lg border border-white/20">
+                                <span class="text-[11px] text-blue-100 block">Recuperación (Payback)</span>
+                                <span id="kpiPayback" class="text-sm font-bold text-emerald-300">11.0 días</span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-blue-200">Punto de equilibrio anual: <span id="kpiEquilibrio" class="font-semibold text-white">1.93%</span> de reducción</div>
+                    </div>
+
+                </div>
+
+                <!-- Fila de Gráficos Interactivos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Gráfico 1: Comparativo Mensual -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                        <h3 class="text-sm font-bold text-[#1f4e78] mb-1">Impacto Mensual: Actual vs. Simulado</h3>
+                        <p class="text-xs text-slate-500 mb-4">Costo por materiales dañados y ahorro generado (S/ / mes)</p>
+                        <div class="relative h-64 w-full">
+                            <canvas id="chartComparativo"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 2: Curva de Sensibilidad -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                        <h3 class="text-sm font-bold text-[#1f4e78] mb-1">Curva de Sensibilidad Determinística</h3>
+                        <p class="text-xs text-slate-500 mb-4">Beneficio Neto Anual (S/) e Índice de Rechazo (%) según % mejora</p>
+                        <div class="relative h-64 w-full">
+                            <canvas id="chartSensibilidad"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+
+        <!-- TABLA COMPARATIVA COMPLETA (Ancho completo) -->
+        <section class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-slate-50/70">
+                <div>
+                    <h3 class="text-base font-bold text-[#1f4e78]">Matriz Comparativa de Escenarios Determinísticos</h3>
+                    <p class="text-xs text-slate-500">Contraste entre la situación inicial, el escenario personalizado en el simulador y las referencias del proyecto.</p>
+                </div>
+                <span class="text-xs font-medium px-2.5 py-1 bg-blue-50 text-[#1f4e78] rounded-md border border-blue-200">Moneda: Soles (S/)</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-slate-600 uppercase bg-slate-100 border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3 font-bold">Indicador / Variable</th>
+                            <th class="px-4 py-3 font-bold text-slate-500">Situación Actual<br><span class="text-[10px] font-normal">(0% Mejora)</span></th>
+                            <th class="px-4 py-3 font-bold bg-blue-50/80 text-[#1f4e78] border-x border-blue-200">Simulación Actual<br><span id="thSimuladoPct" class="text-[10px] font-semibold text-[#4a90e2]">(63.9% Mejora)</span></th>
+                            <th class="px-4 py-3 font-bold">Conservador<br><span class="text-[10px] font-normal">(30% Mejora)</span></th>
+                            <th class="px-4 py-3 font-bold">Moderado<br><span class="text-[10px] font-normal">(50% Mejora)</span></th>
+                            <th class="px-4 py-3 font-bold text-emerald-700">Optimista / Meta<br><span class="text-[10px] font-normal">(63.9% Mejora)</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaComparativaBody" class="divide-y divide-slate-200 text-slate-700">
+                        <!-- Filas generadas dinámicamente por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-slate-400">
+        Herramienta de apoyo para sustentación Capstone — Propuesta de mejora basada en Lean Manufacturing (Kanban) para INDUREC S.A.C. (2026).
+    </footer>
+
+    <script>
+        // Referencias a los elementos del DOM
+        const sliderReduccion = document.getElementById('sliderReduccion');
+        const inputReduccionNum = document.getElementById('inputReduccionNum');
+        const inputRechazoBase = document.getElementById('inputRechazoBase');
+        const inputCostoMensualBase = document.getElementById('inputCostoMensualBase');
+        const inputInversion = document.getElementById('inputInversion');
+
+        let chartComparativo = null;
+        let chartSensibilidad = null;
+
+        // Formateadores de números y moneda
+        const formatSoles = (val) => {
+            return 'S/ ' + val.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
+
+        const formatNum = (val, dec = 2) => {
+            return val.toLocaleString('es-PE', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+        };
+
+        // Función de cálculo central para cualquier porcentaje de reducción
+        function calcularMetricas(reduccionPct, rechazoBase, costoMensualBase, inversion) {
+            const factor = reduccionPct / 100;
+            const rechazoProy = rechazoBase * (1 - factor);
+            const costoMensualProy = costoMensualBase * (1 - factor);
+            const costoAnualProy = costoMensualProy * 12;
+            const ahorroMensual = costoMensualBase - costoMensualProy;
+            const ahorroAnual = ahorroMensual * 12;
+            const beneficioNeto = ahorroAnual - inversion;
+            const roi = reduccionPct > 0 && inversion > 0 ? ((ahorroAnual - inversion) / inversion) * 100 : 0;
+            const paybackDias = ahorroAnual > 0 ? (inversion / (ahorroAnual / 365)) : 0;
+
+            return {
+                reduccionPct,
+                rechazoProy,
+                costoMensualProy,
+                costoAnualProy,
+                ahorroMensual,
+                ahorroAnual,
+                beneficioNeto,
+                roi,
+                paybackDias
+            };
+        }
+
+        // Actualizar estilos de botones de escenarios
+        function actualizarBotonesEscenarios(pctActual) {
+            const botones = document.querySelectorAll('.escenario-btn');
+            botones.forEach(btn => {
+                btn.classList.remove('border-2', 'border-emerald-500', 'bg-emerald-50/60', 'border-[#1f4e78]', 'bg-blue-50/60');
+                btn.classList.add('border', 'border-slate-200');
+            });
+
+            const idMap = {
+                '0': 'btn-esc-0',
+                '30': 'btn-esc-30',
+                '50': 'btn-esc-50',
+                '63.94': 'btn-esc-63.94'
+            };
+
+            const btnActivo = document.getElementById(idMap[String(pctActual)]);
+            if (btnActivo) {
+                btnActivo.classList.remove('border', 'border-slate-200');
+                if (pctActual === 63.94) {
+                    btnActivo.classList.add('border-2', 'border-emerald-500', 'bg-emerald-50/60');
+                } else {
+                    btnActivo.classList.add('border-2', 'border-[#1f4e78]', 'bg-blue-50/60');
+                }
+            }
+        }
+
+        // Seleccionar escenario desde botón
+        function seleccionarEscenario(pct) {
+            sliderReduccion.value = pct;
+            inputReduccionNum.value = pct;
+            actualizarDashboard();
+        }
+
+        // Restaurar valores originales del diagnóstico
+        function restaurarValores() {
+            inputRechazoBase.value = 4.15;
+            inputCostoMensualBase.value = 1805.92;
+            inputInversion.value = 418.00;
+            seleccionarEscenario(63.94);
+        }
+
+        // Inicializar gráficos Chart.js
+        function inicializarGraficos() {
+            const ctxComp = document.getElementById('chartComparativo').getContext('2d');
+            chartComparativo = new Chart(ctxComp, {
+                type: 'bar',
+                data: {
+                    labels: ['Situación Actual', 'Escenario Simulado'],
+                    datasets: [
+                        {
+                            label: 'Costo Mensual por Daños (S/)',
+                            data: [1805.92, 651.17],
+                            backgroundColor: ['#94a3b8', '#4a90e2'],
+                            borderRadius: 6,
+                            barPercentage: 0.55
+                        },
+                        {
+                            label: 'Ahorro Mensual Estimado (S/)',
+                            data: [0, 1154.75],
+                            backgroundColor: ['transparent', '#10b981'],
+                            borderRadius: 6,
+                            barPercentage: 0.55
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 11, family: 'Inter' } } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${formatSoles(ctx.raw)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { size: 11 },
+                                callback: (val) => 'S/ ' + val.toLocaleString('es-PE')
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            ticks: { font: { size: 11, weight: 'bold' } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            const ctxSens = document.getElementById('chartSensibilidad').getContext('2d');
+            chartSensibilidad = new Chart(ctxSens, {
+                type: 'bar',
+                data: {
+                    labels: ['0%', '10%', '20%', '30%', '40%', '50%', '63.9%', '80%', '100%'],
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Índice de Rechazo (%)',
+                            data: [],
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#f59e0b',
+                            borderWidth: 2.5,
+                            pointRadius: 4,
+                            yAxisID: 'y1',
+                            tension: 0.2
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Beneficio Neto Año 1 (S/)',
+                            data: [],
+                            backgroundColor: '#1f4e78',
+                            borderRadius: 4,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { size: 11, family: 'Inter' } } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    if (ctx.dataset.yAxisID === 'y1') {
+                                        return `Índice Rechazo: ${formatNum(ctx.raw)}%`;
+                                    }
+                                    return `Beneficio Neto: ${formatSoles(ctx.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            ticks: {
+                                font: { size: 10 },
+                                callback: (val) => 'S/ ' + (val / 1000).toFixed(0) + 'k'
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            min: 0,
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                font: { size: 10 },
+                                callback: (val) => val.toFixed(1) + '%'
+                            }
+                        },
+                        x: {
+                            ticks: { font: { size: 10 } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Función principal que actualiza KPIs, gráficos y tabla
+        function actualizarDashboard() {
+            const reduccionPct = Math.min(100, Math.max(0, parseFloat(sliderReduccion.value) || 0));
+            const rechazoBase = Math.max(0, parseFloat(inputRechazoBase.value) || 0);
+            const costoMensualBase = Math.max(0, parseFloat(inputCostoMensualBase.value) || 0);
+            const inversion = Math.max(1, parseFloat(inputInversion.value) || 1);
+
+            actualizarBotonesEscenarios(reduccionPct);
+
+            // Actualizar referencia anual en panel izquierdo
+            document.getElementById('lblCostoAnualBase').textContent = formatNum(costoMensualBase * 12);
+
+            // Calcular escenarios
+            const actual = calcularMetricas(0, rechazoBase, costoMensualBase, inversion);
+            const sim = calcularMetricas(reduccionPct, rechazoBase, costoMensualBase, inversion);
+            const cons = calcularMetricas(30, rechazoBase, costoMensualBase, inversion);
+            const mod = calcularMetricas(50, rechazoBase, costoMensualBase, inversion);
+            const meta = calcularMetricas(63.94, rechazoBase, costoMensualBase, inversion);
+
+            // 1. Actualizar KPIs
+            document.getElementById('kpiRechazo').textContent = formatNum(sim.rechazoProy) + '%';
+            const varPp = sim.rechazoProy - rechazoBase;
+            document.getElementById('kpiRechazoVar').textContent = `(${varPp > 0 ? '+' : ''}${formatNum(varPp)} pp)`;
+            document.getElementById('kpiRechazoBaseRef').textContent = formatNum(rechazoBase) + '%';
+
+            const badgeMeta = document.getElementById('badgeMetaRechazo');
+            if (sim.rechazoProy <= 1.50) {
+                badgeMeta.textContent = 'Cumple Meta ≤ 1.5%';
+                badgeMeta.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700';
+            } else {
+                badgeMeta.textContent = 'Sobre Meta (> 1.5%)';
+                badgeMeta.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-700';
+            }
+
+            document.getElementById('kpiCostoMensual').textContent = formatSoles(sim.costoMensualProy);
+            document.getElementById('kpiCostoMensualRef').textContent = formatNum(costoMensualBase);
+
+            document.getElementById('kpiAhorroMensual').textContent = formatSoles(sim.ahorroMensual);
+            document.getElementById('kpiAhorroAnualSub').textContent = formatSoles(sim.ahorroAnual);
+
+            const elBeneficio = document.getElementById('kpiBeneficioNeto');
+            elBeneficio.textContent = formatSoles(sim.beneficioNeto);
+            elBeneficio.className = sim.beneficioNeto >= 0 ? 'text-2xl font-extrabold text-[#1f4e78]' : 'text-2xl font-extrabold text-red-600';
+            document.getElementById('kpiInversionRef').textContent = formatNum(inversion);
+
+            document.getElementById('kpiRoi').textContent = sim.reduccionPct > 0 ? formatNum(sim.roi, 1) + '%' : '0.0%';
+            document.getElementById('kpiPayback').textContent = sim.ahorroAnual > 0 ? formatNum(sim.paybackDias, 1) + ' días' : 'N/A';
+
+            const costoAnualBase = costoMensualBase * 12;
+            const puntoEquilibrio = costoAnualBase > 0 ? (inversion / costoAnualBase) * 100 : 0;
+            document.getElementById('kpiEquilibrio').textContent = formatNum(puntoEquilibrio) + '%';
+
+            // 2. Actualizar Gráfico Comparativo
+            chartComparativo.data.datasets[0].data = [actual.costoMensualProy, sim.costoMensualProy];
+            chartComparativo.data.datasets[1].data = [0, sim.ahorroMensual];
+            chartComparativo.update();
+
+            // 3. Actualizar Gráfico de Sensibilidad
+            const puntosSens = [0, 10, 20, 30, 40, 50, 63.94, 80, 100];
+            const beneficiosSens = [];
+            const rechazosSens = [];
+            const coloresBarras = [];
+
+            puntosSens.forEach(p => {
+                const m = calcularMetricas(p, rechazoBase, costoMensualBase, inversion);
+                beneficiosSens.push(m.beneficioNeto);
+                rechazosSens.push(m.rechazoProy);
+                // Resaltar barra cercana al valor seleccionado
+                if (Math.abs(p - reduccionPct) < 4) {
+                    coloresBarras.push('#10b981');
+                } else {
+                    coloresBarras.push(m.beneficioNeto >= 0 ? '#1f4e78' : '#ef4444');
+                }
+            });
+
+            chartSensibilidad.data.datasets[0].data = rechazosSens;
+            chartSensibilidad.data.datasets[1].data = beneficiosSens;
+            chartSensibilidad.data.datasets[1].backgroundColor = coloresBarras;
+            chartSensibilidad.update();
+
+            // 4. Actualizar Tabla Comparativa
+            document.getElementById('thSimuladoPct').textContent = `(${formatNum(reduccionPct, 1)}% Mejora)`;
+            const tbody = document.getElementById('tablaComparativaBody');
+            
+            const filas = [
+                {
+                    nombre: 'Índice de rechazo proyectado',
+                    vals: [
+                        formatNum(actual.rechazoProy) + '%',
+                        formatNum(sim.rechazoProy) + '%',
+                        formatNum(cons.rechazoProy) + '%',
+                        formatNum(mod.rechazoProy) + '%',
+                        formatNum(meta.rechazoProy) + '%'
+                    ]
+                },
+                {
+                    nombre: 'Costo mensual por daños',
+                    vals: [
+                        formatSoles(actual.costoMensualProy),
+                        formatSoles(sim.costoMensualProy),
+                        formatSoles(cons.costoMensualProy),
+                        formatSoles(mod.costoMensualProy),
+                        formatSoles(meta.costoMensualProy)
+                    ]
+                },
+                {
+                    nombre: 'Costo anual por daños',
+                    vals: [
+                        formatSoles(actual.costoAnualProy),
+                        formatSoles(sim.costoAnualProy),
+                        formatSoles(cons.costoAnualProy),
+                        formatSoles(mod.costoAnualProy),
+                        formatSoles(meta.costoAnualProy)
+                    ]
+                },
+                {
+                    nombre: 'Ahorro mensual estimado',
+                    vals: [
+                        formatSoles(actual.ahorroMensual),
+                        formatSoles(sim.ahorroMensual),
+                        formatSoles(cons.ahorroMensual),
+                        formatSoles(mod.ahorroMensual),
+                        formatSoles(meta.ahorroMensual)
+                    ],
+                    destacarVerde: true
+                },
+                {
+                    nombre: 'Ahorro anual estimado',
+                    vals: [
+                        formatSoles(actual.ahorroAnual),
+                        formatSoles(sim.ahorroAnual),
+                        formatSoles(cons.ahorroAnual),
+                        formatSoles(mod.ahorroAnual),
+                        formatSoles(meta.ahorroAnual)
+                    ],
+                    destacarVerde: true
+                },
+                {
+                    nombre: 'Beneficio neto (1er año)',
+                    vals: [
+                        formatSoles(-inversion),
+                        formatSoles(sim.beneficioNeto),
+                        formatSoles(cons.beneficioNeto),
+                        formatSoles(mod.beneficioNeto),
+                        formatSoles(meta.beneficioNeto)
+                    ],
+                    negrita: true
+                },
+                {
+                    nombre: 'Retorno de Inversión (ROI)',
+                    vals: [
+                        '—',
+                        sim.reduccionPct > 0 ? formatNum(sim.roi, 1) + '%' : '—',
+                        formatNum(cons.roi, 1) + '%',
+                        formatNum(mod.roi, 1) + '%',
+                        formatNum(meta.roi, 1) + '%'
+                    ]
+                },
+                {
+                    nombre: 'Periodo de recuperación (Payback)',
+                    vals: [
+                        '—',
+                        sim.ahorroAnual > 0 ? formatNum(sim.paybackDias, 1) + ' días' : '—',
+                        formatNum(cons.paybackDias, 1) + ' días',
+                        formatNum(mod.paybackDias, 1) + ' días',
+                        formatNum(meta.paybackDias, 1) + ' días'
+                    ]
+                }
+            ];
+
+            tbody.innerHTML = filas.map(f => `
+                <tr class="hover:bg-slate-50 transition ${f.negrita ? 'font-bold bg-slate-50/50' : ''}">
+                    <td class="px-4 py-3 font-medium text-slate-800">${f.nombre}</td>
+                    <td class="px-4 py-3 text-slate-500">${f.vals[0]}</td>
+                    <td class="px-4 py-3 bg-blue-50/50 border-x border-blue-100 font-bold ${f.destacarVerde ? 'text-emerald-600' : 'text-[#1f4e78]'}">${f.vals[1]}</td>
+                    <td class="px-4 py-3">${f.vals[2]}</td>
+                    <td class="px-4 py-3">${f.vals[3]}</td>
+                    <td class="px-4 py-3 font-semibold ${f.destacarVerde ? 'text-emerald-700' : ''}">${f.vals[4]}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Event Listeners para sincronizar slider, inputs y gráficos
+        sliderReduccion.addEventListener('input', () => {
+            inputReduccionNum.value = sliderReduccion.value;
+            actualizarDashboard();
+        });
+
+        inputReduccionNum.addEventListener('input', () => {
+            sliderReduccion.value = inputReduccionNum.value;
+            actualizarDashboard();
+        });
+
+        [inputRechazoBase, inputCostoMensualBase, inputInversion].forEach(inp => {
+            inp.addEventListener('input', actualizarDashboard);
+        });
+
+        // Arrancar aplicación al cargar la ventana
+        window.onload = function() {
+            inicializarGraficos();
+            actualizarDashboard();
+        };
+    </script>
+</body>
+</html>
