@@ -97,9 +97,9 @@
                             <div class="text-xs font-semibold text-slate-700">3. Moderado</div>
                             <div class="text-sm font-bold text-[#4a90e2]">50.0% Reducción</div>
                         </button>
-                        <button onclick="seleccionarEscenario(63.94)" id="btn-esc-63.94" class="escenario-btn px-3 py-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50/60 text-left transition">
+                        <button onclick="seleccionarEscenario(68.88)" id="btn-esc-68.88" class="escenario-btn px-3 py-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50/60 text-left transition">
                             <div class="text-xs font-semibold text-emerald-800">4. Optimista / Meta</div>
-                            <div class="text-sm font-bold text-emerald-600">63.9% Reducción</div>
+                            <div class="text-sm font-bold text-emerald-600">68.9% Reducción</div>
                         </button>
                     </div>
                 </div>
@@ -109,15 +109,15 @@
                     <div class="flex justify-between items-center mb-2">
                         <label for="sliderReduccion" class="text-sm font-bold text-[#1f4e78]">% Reducción de Daños Proyectado</label>
                         <div class="flex items-center bg-slate-100 rounded-lg px-2 py-1 border border-slate-300">
-                            <input type="number" id="inputReduccionNum" value="63.94" min="0" max="100" step="0.1" class="w-16 text-right font-bold text-[#1f4e78] bg-transparent focus:outline-none text-sm">
+                            <input type="number" id="inputReduccionNum" value="68.88" min="0" max="100" step="0.01" class="w-16 text-right font-bold text-[#1f4e78] bg-transparent focus:outline-none text-sm">
                             <span class="text-xs font-bold text-slate-500 ml-1">%</span>
                         </div>
                     </div>
-                    <input type="range" id="sliderReduccion" min="0" max="100" step="0.1" value="63.94" class="w-full my-3">
+                    <input type="range" id="sliderReduccion" min="0" max="100" step="0.1" value="68.88" class="w-full my-3">
                     <div class="flex justify-between text-[11px] text-slate-400 font-medium">
                         <span>0% (Sin mejora)</span>
                         <span>50%</span>
-                        <span class="text-emerald-600 font-semibold">Meta: 63.9%</span>
+                        <span class="text-emerald-600 font-semibold">Meta: 68.9%</span>
                         <span>100%</span>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
                     </h2>
                     
                     <div>
-                        <label for="inputRechazoBase" class="block text-xs font-semibold text-slate-600 mb-1">Índice de rechazo actual (%)</label>
+                        <label for="inputRechazoBase" class="block text-xs font-semibold text-slate-600 mb-1">Índice de materiales dañados actual (%)</label>
                         <div class="relative">
                             <input type="number" id="inputRechazoBase" value="4.15" min="0.1" max="100" step="0.01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800 focus:border-[#4a90e2] focus:outline-none">
                             <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">%</span>
@@ -165,17 +165,17 @@
                 <!-- Fila de 5 Tarjetas de KPIs Dinámicos -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     
-                    <!-- KPI 1: Índice de Rechazo -->
+                    <!-- KPI 1: Índice de Materiales Dañados -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Índice de Rechazo</span>
-                            <span id="badgeMetaRechazo" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700">Cumple Meta ≤ 1.5%</span>
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Índice de Materiales Dañados</span>
+                            <span id="badgeMetaRechazo" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700 shrink-0">Cumple Estándar ≤ 1.30%</span>
                         </div>
                         <div class="my-2">
-                            <span id="kpiRechazo" class="text-2xl font-extrabold text-[#1f4e78]">1.50%</span>
-                            <span id="kpiRechazoVar" class="text-xs font-semibold text-emerald-600 ml-1.5">(-2.65 pp)</span>
+                            <span id="kpiRechazo" class="text-2xl font-extrabold text-[#1f4e78]">1.29%</span>
+                            <span id="kpiRechazoVar" class="text-xs font-semibold text-emerald-600 ml-1.5">(-2.86 pp)</span>
                         </div>
-                        <div class="text-[11px] text-slate-400">Línea base: <span id="kpiRechazoBaseRef">4.15%</span></div>
+                        <div class="text-[11px] text-slate-400">Línea base: <span id="kpiRechazoBaseRef">4.15%</span> | Estándar: 1.30%</div>
                     </div>
 
                     <!-- KPI 2: Costo Mensual por Daños -->
@@ -187,7 +187,7 @@
                             </div>
                         </div>
                         <div class="my-2">
-                            <span id="kpiCostoMensual" class="text-2xl font-extrabold text-slate-800">S/ 651.17</span>
+                            <span id="kpiCostoMensual" class="text-2xl font-extrabold text-slate-800">S/ 562.00</span>
                         </div>
                         <div class="text-[11px] text-slate-400">Antes: S/ <span id="kpiCostoMensualRef">1,805.92</span> / mes</div>
                     </div>
@@ -201,9 +201,9 @@
                             </div>
                         </div>
                         <div class="my-2">
-                            <span id="kpiAhorroMensual" class="text-2xl font-extrabold text-emerald-600">S/ 1,154.75</span>
+                            <span id="kpiAhorroMensual" class="text-2xl font-extrabold text-emerald-600">S/ 1,243.92</span>
                         </div>
-                        <div class="text-[11px] text-slate-500 font-medium">Ahorro anual: <span id="kpiAhorroAnualSub" class="font-bold text-slate-700">S/ 13,857.00</span></div>
+                        <div class="text-[11px] text-slate-500 font-medium">Ahorro anual: <span id="kpiAhorroAnualSub" class="font-bold text-slate-700">S/ 14,927.01</span></div>
                     </div>
 
                     <!-- KPI 4: Beneficio Neto 1er Año -->
@@ -215,7 +215,7 @@
                             </div>
                         </div>
                         <div class="my-2">
-                            <span id="kpiBeneficioNeto" class="text-2xl font-extrabold text-[#1f4e78]">S/ 13,439.00</span>
+                            <span id="kpiBeneficioNeto" class="text-2xl font-extrabold text-[#1f4e78]">S/ 14,509.01</span>
                         </div>
                         <div class="text-[11px] text-slate-400">Descontando inversión de S/ <span id="kpiInversionRef">418.00</span></div>
                     </div>
@@ -227,10 +227,10 @@
                             <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-white/20 text-white">Indicador Clave</span>
                         </div>
                         <div class="my-2 flex flex-wrap items-baseline justify-between gap-2">
-                            <span id="kpiRoi" class="text-2xl sm:text-3xl font-extrabold text-white">3,215.1%</span>
+                            <span id="kpiRoi" class="text-2xl sm:text-3xl font-extrabold text-white">3,471.1%</span>
                             <div class="bg-white/15 px-3 py-1 rounded-lg border border-white/20">
                                 <span class="text-[11px] text-blue-100 block">Recuperación (Payback)</span>
-                                <span id="kpiPayback" class="text-sm font-bold text-emerald-300">11.0 días</span>
+                                <span id="kpiPayback" class="text-sm font-bold text-emerald-300">10.2 días</span>
                             </div>
                         </div>
                         <div class="text-[11px] text-blue-200">Punto de equilibrio anual: <span id="kpiEquilibrio" class="font-semibold text-white">1.93%</span> de reducción</div>
@@ -253,7 +253,7 @@
                     <!-- Gráfico 2: Curva de Sensibilidad -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                         <h3 class="text-sm font-bold text-[#1f4e78] mb-1">Curva de Sensibilidad Determinística</h3>
-                        <p class="text-xs text-slate-500 mb-4">Beneficio Neto Anual (S/) e Índice de Rechazo (%) según % mejora</p>
+                        <p class="text-xs text-slate-500 mb-4">Beneficio Neto Anual (S/) e Índice de Materiales Dañados (%) según % mejora</p>
                         <div class="relative h-64 w-full">
                             <canvas id="chartSensibilidad"></canvas>
                         </div>
@@ -279,10 +279,10 @@
                         <tr>
                             <th class="px-4 py-3 font-bold">Indicador / Variable</th>
                             <th class="px-4 py-3 font-bold text-slate-500">Situación Actual<br><span class="text-[10px] font-normal">(0% Mejora)</span></th>
-                            <th class="px-4 py-3 font-bold bg-blue-50/80 text-[#1f4e78] border-x border-blue-200">Simulación Actual<br><span id="thSimuladoPct" class="text-[10px] font-semibold text-[#4a90e2]">(63.9% Mejora)</span></th>
+                            <th class="px-4 py-3 font-bold bg-blue-50/80 text-[#1f4e78] border-x border-blue-200">Simulación Actual<br><span id="thSimuladoPct" class="text-[10px] font-semibold text-[#4a90e2]">(68.9% Mejora)</span></th>
                             <th class="px-4 py-3 font-bold">Conservador<br><span class="text-[10px] font-normal">(30% Mejora)</span></th>
                             <th class="px-4 py-3 font-bold">Moderado<br><span class="text-[10px] font-normal">(50% Mejora)</span></th>
-                            <th class="px-4 py-3 font-bold text-emerald-700">Optimista / Meta<br><span class="text-[10px] font-normal">(63.9% Mejora)</span></th>
+                            <th class="px-4 py-3 font-bold text-emerald-700">Optimista / Meta<br><span class="text-[10px] font-normal">(68.9% Mejora)</span></th>
                         </tr>
                     </thead>
                     <tbody id="tablaComparativaBody" class="divide-y divide-slate-200 text-slate-700">
@@ -356,13 +356,13 @@
                 '0': 'btn-esc-0',
                 '30': 'btn-esc-30',
                 '50': 'btn-esc-50',
-                '63.94': 'btn-esc-63.94'
+                '68.88': 'btn-esc-68.88'
             };
 
             const btnActivo = document.getElementById(idMap[String(pctActual)]);
             if (btnActivo) {
                 btnActivo.classList.remove('border', 'border-slate-200');
-                if (pctActual === 63.94) {
+                if (pctActual === 68.88) {
                     btnActivo.classList.add('border-2', 'border-emerald-500', 'bg-emerald-50/60');
                 } else {
                     btnActivo.classList.add('border-2', 'border-[#1f4e78]', 'bg-blue-50/60');
@@ -382,7 +382,7 @@
             inputRechazoBase.value = 4.15;
             inputCostoMensualBase.value = 1805.92;
             inputInversion.value = 418.00;
-            seleccionarEscenario(63.94);
+            seleccionarEscenario(68.88);
         }
 
         // Inicializar gráficos Chart.js
@@ -395,14 +395,14 @@
                     datasets: [
                         {
                             label: 'Costo Mensual por Daños (S/)',
-                            data: [1805.92, 651.17],
+                            data: [1805.92, 562.00],
                             backgroundColor: ['#94a3b8', '#4a90e2'],
                             borderRadius: 6,
                             barPercentage: 0.55
                         },
                         {
                             label: 'Ahorro Mensual Estimado (S/)',
-                            data: [0, 1154.75],
+                            data: [0, 1243.92],
                             backgroundColor: ['transparent', '#10b981'],
                             borderRadius: 6,
                             barPercentage: 0.55
@@ -441,11 +441,11 @@
             chartSensibilidad = new Chart(ctxSens, {
                 type: 'bar',
                 data: {
-                    labels: ['0%', '10%', '20%', '30%', '40%', '50%', '63.9%', '80%', '100%'],
+                    labels: ['0%', '10%', '20%', '30%', '40%', '50%', '68.9%', '80%', '100%'],
                     datasets: [
                         {
                             type: 'line',
-                            label: 'Índice de Rechazo (%)',
+                            label: 'Índice de Materiales Dañados (%)',
                             data: [],
                             borderColor: '#f59e0b',
                             backgroundColor: '#f59e0b',
@@ -473,7 +473,7 @@
                             callbacks: {
                                 label: (ctx) => {
                                     if (ctx.dataset.yAxisID === 'y1') {
-                                        return `Índice Rechazo: ${formatNum(ctx.raw)}%`;
+                                        return `Índice Materiales Dañados: ${formatNum(ctx.raw)}%`;
                                     }
                                     return `Beneficio Neto: ${formatSoles(ctx.raw)}`;
                                 }
@@ -526,7 +526,7 @@
             const sim = calcularMetricas(reduccionPct, rechazoBase, costoMensualBase, inversion);
             const cons = calcularMetricas(30, rechazoBase, costoMensualBase, inversion);
             const mod = calcularMetricas(50, rechazoBase, costoMensualBase, inversion);
-            const meta = calcularMetricas(63.94, rechazoBase, costoMensualBase, inversion);
+            const meta = calcularMetricas(68.88, rechazoBase, costoMensualBase, inversion);
 
             // 1. Actualizar KPIs
             document.getElementById('kpiRechazo').textContent = formatNum(sim.rechazoProy) + '%';
@@ -535,12 +535,12 @@
             document.getElementById('kpiRechazoBaseRef').textContent = formatNum(rechazoBase) + '%';
 
             const badgeMeta = document.getElementById('badgeMetaRechazo');
-            if (sim.rechazoProy <= 1.50) {
-                badgeMeta.textContent = 'Cumple Meta ≤ 1.5%';
-                badgeMeta.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700';
+            if (sim.rechazoProy <= 1.30) {
+                badgeMeta.textContent = 'Cumple Estándar ≤ 1.30%';
+                badgeMeta.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-700 shrink-0';
             } else {
-                badgeMeta.textContent = 'Sobre Meta (> 1.5%)';
-                badgeMeta.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-700';
+                badgeMeta.textContent = 'Sobre Estándar (> 1.30%)';
+                badgeMeta.className = 'px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-700 shrink-0';
             }
 
             document.getElementById('kpiCostoMensual').textContent = formatSoles(sim.costoMensualProy);
@@ -567,7 +567,7 @@
             chartComparativo.update();
 
             // 3. Actualizar Gráfico de Sensibilidad
-            const puntosSens = [0, 10, 20, 30, 40, 50, 63.94, 80, 100];
+            const puntosSens = [0, 10, 20, 30, 40, 50, 68.88, 80, 100];
             const beneficiosSens = [];
             const rechazosSens = [];
             const coloresBarras = [];
@@ -595,7 +595,7 @@
             
             const filas = [
                 {
-                    nombre: 'Índice de rechazo proyectado',
+                    nombre: 'Índice de materiales dañados proyectado',
                     vals: [
                         formatNum(actual.rechazoProy) + '%',
                         formatNum(sim.rechazoProy) + '%',
